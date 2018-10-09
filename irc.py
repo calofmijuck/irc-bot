@@ -26,16 +26,18 @@ class IRC:
             text = self.irc.recv(2048).decode("UTF-8")
             if text.find('PING') != -1:
                 self.irc.send(bytes('PONG ' + text.split() [1] + '\r\n', "UTF-8"))
+            if text.find('INVITE') != -1:
+                self.irc.send(bytes('JOIN ' + text.split() [1] + '\r\n', "UTF-8"))
             return text
 
         except (ConnectionResetError, socket.timeout) as e: pass
 
     def send(self, chan, msg):
-        cmd = "PRIVMSG " + chan + " :" + msg + "\n"
+        cmd = "PRIVMSG " + chan + " :" + msg
         self.irc.send(bytes(cmd, "UTF-8"))
-        print("SENT: " + cmd, end="")
+        print("SENT: " + cmd)
 
     def give_op(self, chan, user):
-        cmd = "MODE " + chan + " +o " + user + "\n"
+        cmd = "MODE " + chan + " +o " + user
         self.irc.send(bytes(cmd, "UTF-8"))
-        print("SENT: " + cmd, end="")
+        print("SENT: " + cmd)
